@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: .
+    container_name: fastapi-container
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: mysql+mysqlconnector://secureuser:securepassword@db/securedb
+    networks:
+      - app_network
+
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: securedb
+      MYSQL_USER: secureuser
+      MYSQL_PASSWORD: securepassword
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app_network
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  app_network:
+    name: app_network
+    external: false
